@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="/static/admin.css">
+<div class="admin-container">
+
+<h2>Nutrition Panel</h2>
+
+<form method="post">
+<input name="name" placeholder="Food">
+<input name="calories">
+<input name="protein">
+<input name="carbs">
+<input name="fat">
+<button>Add</button>
+</form>
+
+<div class="users">
+{% for f in foods %}
+<div class="card">{{f[1]}} - {{f[2]}} cal</div>
+{% endfor %}
+</div>
+
+</div>

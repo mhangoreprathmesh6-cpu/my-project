@@ -1,0 +1,746 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+:root {
+    --primary-orange: #ff6b00;
+    --dark-bg: #0f171a;
+}
+
+/* ===== BASE ===== */
+body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    font-family: 'Outfit', sans-serif;
+    color: #ffffff;
+    margin: 0;
+    padding: 20px;
+}
+
+.dashboard {
+    width: 95%;
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* ===== CARD ===== */
+.card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(18px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ===== HEADINGS ===== */
+h2 {
+    text-align: center;
+    color: var(--primary-orange);
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+/* ===== GRID ===== */
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* ===== INPUTS ===== */
+input {
+    background: #0a1114 !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    font-size: 14px !important;
+    width: 100%;
+    border: none;
+    color: #fff;
+}
+
+input::placeholder { color: #aaa; }
+
+input:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(0,150,255,0.2);
+    border: 1px solid rgba(0,150,255,0.3);
+}
+
+/* ===== BUTTON ===== */
+.btn-glow {
+    background: linear-gradient(135deg, #007bff, #00c6ff);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.btn-glow:hover { opacity: 0.9; }
+
+/* ===== STATS GRID ===== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap: 15px;
+}
+
+.stat-item {
+    background: rgba(255,255,255,0.03);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* ===== CHART BOX ===== */
+.chart-box {
+    height: 400px;
+    margin-top: 20px;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+    .input-row {
+        grid-template-columns: 1fr;
+    }
+}
+/* ===== NAVBAR FIX ===== */
+nav, .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 26, 0.9);
+    backdrop-filter: blur(10px);
+}
+
+/* body spacing fix */
+body {
+    margin: 0;
+    padding: 0; /* <-- important (20px काढलं) */
+}
+
+/* dashboard spacing */
+.dashboard {
+    margin-top: 20px;
+}
+ .progress-ring {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 20px auto;
+    width: 180px;
+    height: 180px;
+    filter: drop-shadow(0 0 12px rgba(0,255,200,0.2));
+}
+
+.progress-ring svg {
+    transform: rotate(-90deg);
+}
+
+.progress-ring circle {
+    fill: none;
+    stroke-width: 12;
+    stroke-linecap: round;
+}
+
+.progress-ring .bg {
+    stroke: rgba(255,255,255,0.08);
+}
+
+.progress-ring .progress {
+    stroke: url(#grad);
+    stroke-dasharray: 440;
+    stroke-dashoffset: calc(440 - (440 * var(--progress)) / 100);
+    transition: stroke-dashoffset 1s ease;
+}
+
+.progress-text {
+    position: absolute;
+    font-size: 22px;
+    font-weight: 700;
+    color: #00ffc8;
+    text-shadow: 0 0 10px rgba(0,255,200,0.4);
+}
+#heatmap {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 6px;
+    margin-top: 15px;
+    padding: 10px;
+}
+
+/* ===== BASE CELL ===== */
+.day {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* ===== ACTIVE DAY (SUCCESS) ===== */
+.day.active {
+    background: linear-gradient(135deg, #00ffc8, #00bfff);
+    box-shadow:
+        0 0 8px rgba(0,255,200,0.4),
+        0 0 15px rgba(0,191,255,0.3);
+    transform: scale(1.05);
+}
+
+/* ===== HOVER EFFECT ===== */
+.day:hover {
+    transform: scale(1.2);
+    background: rgba(255,255,255,0.12);
+}
+
+/* ===== INNER GLOW LAYER ===== */
+.day::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center,
+        rgba(255,255,255,0.08),
+        transparent 70%);
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.day:hover::after {
+    opacity: 1;
+}
+
+/* ===== SECTION TITLE ENHANCEMENT ===== */
+.card h2 {
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 20px;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+    #heatmap {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+    }
+}
+.goal-extra {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.goal-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(0,255,200,0.1);
+    color: #00ffc8;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.goal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #aaa;
+}
+
+.goal-grid div {
+    background: rgba(255,255,255,0.03);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.goal-ai {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #ffffff;
+    font-weight: 500;
+}
+.card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(18px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+}
+
+/* ===== TITLE ===== */
+.card h2 {
+    text-align: center;
+    color: #00ffc8;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+/* ===== INSIGHT BOX ===== */
+.insight-box {
+    background: rgba(0,0,0,0.25);
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 20px;
+    border: 1px solid rgba(0,255,200,0.15);
+    box-shadow: inset 0 0 15px rgba(0,255,200,0.05);
+    transition: all 0.3s ease;
+}
+
+.insight-box:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(0,255,200,0.2);
+}
+
+/* ===== AI SCORE CARD ===== */
+.feature-card {
+    background: linear-gradient(135deg, rgba(0,255,200,0.08), rgba(0,123,255,0.05));
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    border: 1px solid rgba(0,255,200,0.15);
+    box-shadow: 0 0 20px rgba(0,255,200,0.08);
+    transition: 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 25px rgba(0,255,200,0.2);
+}
+
+/* ===== AI SCORE TITLE ===== */
+.feature-card h3 {
+    color: #00ffc8;
+    font-size: 16px;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+/* ===== SCORE VALUE ===== */
+.val {
+    font-size: 28px;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0,255,200,0.4);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .card {
+        padding: 20px;
+    }
+
+    .val {
+        font-size: 24px;
+    }
+}
+.day {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.05);
+    transition: 0.25s ease;
+    position: relative;
+}
+
+/* LOW ACTIVITY */
+.day.low {
+    background: rgba(0,255,200,0.2);
+}
+
+/* MEDIUM */
+.day.medium {
+    background: rgba(0,123,255,0.4);
+    box-shadow: 0 0 8px rgba(0,123,255,0.3);
+}
+
+/* HIGH */
+.day.high {
+    background: linear-gradient(135deg, #00ffc8, #00bfff);
+    box-shadow: 0 0 12px rgba(0,255,200,0.5);
+    transform: scale(1.05);
+}
+.day:hover::after {
+    content: attr(data-info);
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    color: #fff;
+    padding: 5px 8px;
+    font-size: 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 10;
+}
+.day.high {
+    box-shadow:
+        0 0 8px #00ffc8,
+        0 0 15px #00bfff;
+    animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.08); }
+}
+.consistency-score {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 14px;
+    color: #00ffc8;
+    padding: 8px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,255,200,0.1);
+}
+.day.best {
+    background: linear-gradient(135deg, #ff6b00, #ffcc00);
+    box-shadow: 0 0 15px rgba(255,107,0,0.5);
+    transform: scale(1.1);
+}
+    .day {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 6px;
+    transition: 0.25s ease;
+    position: relative;
+}
+
+.day:hover {
+    transform: scale(1.2);
+    z-index: 2;
+}
+.week-labels {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+    text-align: center;
+    font-size: 11px;
+    color: #aaa;
+    letter-spacing: 0.5px;
+}
+
+.week-labels span {
+    padding: 4px 0;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    transition: 0.2s ease;
+}
+
+.week-labels span:hover {
+    background: rgba(0,255,200,0.15);
+    color: #00ffc8;
+}
+
+</style>
+
+<div class="dashboard">
+
+    <!-- 1. TRACKING -->
+    <div class="card">
+        <h2>🎯 Goal Setter</h2>
+        <form method="POST" action="/add_weight" style="text-align: center;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="input-row">
+                <input type="number" name="weight" placeholder="Weight Today (kg)" required step="0.1">
+            </div>
+            <button type="submit" class="btn-glow">Save</button>
+        </form>
+    </div>
+
+    <!-- 2. MAIN ANALYTICS -->
+    <div class="card">
+        <h2>📊 Weight Dynamics</h2>
+
+        <div class="stats-grid">
+            <div class="stat-item"><h4>Current</h4><p>{{ latest_weight }} kg</p></div>
+            <div class="stat-item"><h4>Target</h4><p>{{ target_weight }} kg</p></div>
+            <div class="stat-item"><h4>Completion</h4><p>{{ progress_percent }}%</p></div>
+            <div class="stat-item"><h4>Net Change</h4><p>{{ weight_change }} kg</p></div>
+        </div>
+
+        <div class="chart-box">
+            <canvas id="weightChart"></canvas>
+        </div>
+    </div>
+
+    <!-- 3. AI INSIGHTS -->
+    <div class="card">
+        <h2>🧬 Bio-Metrics</h2>
+
+
+
+        <div class="chart-box">
+            <canvas id="bmiChart"></canvas>
+        </div>
+    </div>
+    <!-- NEW: PROGRESS RING -->
+<div class="card">
+    <h2>🎯 Goal Progress</h2>
+
+    <div class="progress-ring">
+        <svg width="150" height="150">
+    <defs>
+        <linearGradient id="grad">
+            <stop offset="0%" stop-color="#00ffc8"/>
+            <stop offset="100%" stop-color="#007bff"/>
+        </linearGradient>
+    </defs>
+
+    <circle cx="75" cy="75" r="70" class="bg"></circle>
+    <circle cx="75" cy="75" r="70" class="progress"
+        style="--progress: {{ progress_percent }}"></circle>
+</svg>
+        <div class="progress-text">{{ progress_percent }}%</div>
+    </div>
+    <div class="goal-extra">
+
+    <div class="goal-badge">{{ goal_status }}</div>
+
+    <div class="goal-grid">
+        <div>Remaining: {{ remaining }} kg</div>
+        <div>Speed: {{ speed }} kg/day</div>
+        <div>Days Left: {{ days_left }}</div>
+    </div>
+
+    <div class="goal-ai">
+        {{ ai_msg }}
+    </div>
+
+</div>
+</div>
+
+<!-- NEW: AI INSIGHT -->
+<div class="card">
+    <h2>🧠 Insight</h2>
+    <div class="insight-box">{{ insight }}</div>
+    <div class="feature-card">
+            <h3>AI SCORE</h3>
+            <div class="val">{{ ai_score }} / 100</div>
+
+    </div>
+</div>
+
+<!-- NEW: HEATMAP -->
+<div class="card">
+    <h2>📅 Consistency</h2>
+    <div class="week-labels">
+    <span>Mon</span>
+    <span>Tue</span>
+    <span>Wed</span>
+    <span>Thu</span>
+    <span>Fri</span>
+    <span>Sat</span>
+    <span>Sun</span>
+</div>
+    <div id="heatmap"></div>
+    <div class="consistency-score">
+    Consistency Score: {{ streak * 5 if streak < 20 else 100 }}%
+</div>
+</div>
+
+
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ================= SAFE DATA =================
+    const labels = JSON.parse('{{ dates | tojson | safe }}' || "[]");
+    const weights = JSON.parse('{{ weights | tojson | safe }}' || "[]");
+    const bmi = JSON.parse('{{ bmi_list | tojson | safe }}' || "[]");
+
+    // ================= GLOBAL STYLE =================
+    Chart.defaults.color = "#ccc";
+    Chart.defaults.font.family = "Outfit";
+
+    // ================= GRADIENT =================
+    function gradientFill(ctx, color) {
+        const g = ctx.createLinearGradient(0, 0, 0, 400);
+        g.addColorStop(0, color.replace('1)', '0.6)'));
+        g.addColorStop(1, color.replace('1)', '0'));
+        return g;
+    }
+
+    // ================= OPTIONS =================
+    const ultraOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        interaction: {
+            mode: 'index',
+            intersect: false
+        },
+
+        animation: {
+            duration: 1200,
+            easing: 'easeInOutCubic'
+        },
+
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                enabled: true,
+                backgroundColor: "#111",
+                borderColor: "#00ffc8",
+                borderWidth: 1,
+                padding: 10
+            }
+        },
+
+        scales: {
+            x: {
+                grid: { display: false },
+                ticks: { color: "#aaa" }
+            },
+            y: {
+                grid: { color: "rgba(255,255,255,0.05)" },
+                ticks: { color: "#888" }
+            }
+        },
+
+        elements: {
+            line: { tension: 0.55 },
+            point: { radius: 3 }
+        }
+    };
+
+    // ================= TREND ENGINE =================
+    function getTrend(data) {
+        if (!data || data.length < 2) return [];
+        let trend = [];
+        for (let i = 0; i < data.length; i++) {
+            if (i === 0) trend.push(data[i]);
+            else trend.push((data[i] + data[i - 1]) / 2);
+        }
+        return trend;
+    }
+
+    const trendData = getTrend(weights);
+
+    // ================= DESTROY OLD =================
+    if (window.weightChartInstance) window.weightChartInstance.destroy();
+    if (window.bmiChartInstance) window.bmiChartInstance.destroy();
+
+    // ================= WEIGHT CHART =================
+    const wCtx = document.getElementById('weightChart').getContext('2d');
+
+    window.weightChartInstance = new Chart(wCtx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Weight",
+                    data: weights,
+                    borderColor: "#00ffc8",
+                    borderWidth: 3,
+                    fill: true,
+                    backgroundColor: gradientFill(wCtx, "rgba(0,255,200,1)")
+                },
+                {
+                    label: "Trend",
+                    data: trendData,
+                    borderColor: "#ffffff55",
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    borderDash: [5, 5]
+                }
+            ]
+        },
+        options: ultraOptions
+    });
+
+    // ================= BMI CHART =================
+    const bCtx = document.getElementById('bmiChart').getContext('2d');
+
+    window.bmiChartInstance = new Chart(bCtx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: bmi,
+                borderColor: "#ff6b00",
+                borderWidth: 3,
+                fill: true,
+                backgroundColor: gradientFill(bCtx, "rgba(255,107,0,1)")
+            }]
+        },
+        options: ultraOptions
+    });
+
+    // ================= HEATMAP (PRO 60 DAYS) =================
+   const heatmap = document.getElementById("heatmap");
+heatmap.innerHTML = "";
+
+// 🔥 REAL DATA COUNTS
+const counts = {{ date_counts | tojson }};
+const maxCount = Math.max(...Object.values(counts).concat([1]));
+
+for (let i = 59; i >= 0; i--) {
+
+    let d = new Date();
+    d.setDate(d.getDate() - i);
+
+    let str = d.toISOString().split("T")[0];
+
+    let div = document.createElement("div");
+    div.className = "day";
+
+    if (counts[str]) {
+
+        let level = counts[str] / maxCount;
+
+        if (level < 0.3) {
+            div.style.background = "rgba(0,255,200,0.25)";
+        }
+        else if (level < 0.7) {
+            div.style.background = "rgba(0,123,255,0.5)";
+            div.style.boxShadow = "0 0 6px rgba(0,123,255,0.4)";
+        }
+        else {
+            div.style.background = "linear-gradient(135deg, #00ffc8, #00bfff)";
+            div.style.boxShadow = "0 0 12px #00ffc8";
+            div.style.transform = "scale(1.05)";
+        }
+    }
+    else {
+        div.style.background = "rgba(255,255,255,0.03)";
+    }
+
+    heatmap.appendChild(div);
+}
+
+});
+
+</script>
+{% endblock %}

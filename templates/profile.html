@@ -1,0 +1,794 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+
+/* =========================
+   GLOBAL
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:#0d1117;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* =========================
+   MAIN LAYOUT
+========================= */
+
+.dashboard{
+    display:flex;
+    min-height:100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+    width:260px;
+    background:rgba(255,255,255,0.04);
+    backdrop-filter:blur(18px);
+    border-right:1px solid rgba(255,255,255,0.05);
+    padding:30px 20px;
+    position:fixed;
+    height:100%;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+    color:#ff9f43;
+    margin-bottom:40px;
+}
+
+.sidebar-menu{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.sidebar-menu a{
+    text-decoration:none;
+    color:#cbd5e1;
+    padding:14px 18px;
+    border-radius:14px;
+    transition:.3s;
+    font-size:16px;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active{
+    background:linear-gradient(45deg,#ff9f43,#ff6b00);
+    color:white;
+    transform:translateX(5px);
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.main-content{
+    margin-left:260px;
+    width:calc(100% - 260px);
+    padding:30px;
+}
+
+/* =========================
+   TOPBAR
+========================= */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.topbar h1{
+    font-size:34px;
+}
+
+.profile-small{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.profile-small img{
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid #ff9f43;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.card{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:22px;
+    padding:25px;
+    backdrop-filter:blur(15px);
+    box-shadow:0 10px 40px rgba(0,0,0,0.35);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.stat-card{
+    background:rgba(255,255,255,0.04);
+    padding:20px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,0.05);
+}
+
+.stat-card p{
+    color:#94a3b8;
+    margin-bottom:10px;
+}
+
+.stat-card h2{
+    font-size:32px;
+    color:#ff9f43;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.grid-2{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.grid-3{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:20px;
+    margin-bottom:25px;
+}
+
+/* =========================
+   PROFILE CARD
+========================= */
+
+.profile-box{
+    display:flex;
+    gap:20px;
+    align-items:center;
+}
+
+.profile-box img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    border:4px solid #ff9f43;
+}
+
+.profile-details h2{
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+.profile-details p{
+    margin:7px 0;
+    color:#cbd5e1;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.btn{
+    display:inline-block;
+    padding:12px 22px;
+    border-radius:12px;
+    text-decoration:none;
+    background:linear-gradient(45deg,#ff9f43,#ff6b00);
+    color:white;
+    margin-top:12px;
+    transition:.3s;
+    font-weight:bold;
+}
+
+.btn:hover{
+    transform:scale(1.05);
+}
+
+/* =========================
+   SCORE
+========================= */
+
+.score-circle{
+    width:170px;
+    height:170px;
+    border-radius:50%;
+    margin:auto;
+
+    background:
+    conic-gradient(
+    #ff9f43 calc(var(--score)*1%),
+    rgba(255,255,255,0.08) 0);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:40px;
+    font-weight:bold;
+}
+
+/* =========================
+   PROGRESS
+========================= */
+
+progress{
+    width:100%;
+    height:14px;
+    border:none;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:10px;
+    margin-bottom:18px;
+}
+
+progress::-webkit-progress-bar{
+    background:#1e293b;
+}
+
+progress::-webkit-progress-value{
+    background:
+    linear-gradient(90deg,#ff9f43,#ff6b00);
+}
+
+/* =========================
+   TABLE
+========================= */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th{
+    background:#ff9f43;
+    color:black;
+    padding:14px;
+}
+
+td{
+    padding:14px;
+    text-align:center;
+    border-bottom:
+    1px solid rgba(255,255,255,0.05);
+}
+
+tr:hover{
+    background:
+    rgba(255,255,255,0.04);
+}
+
+/* =========================
+   INPUT
+========================= */
+
+input{
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:rgba(255,255,255,0.06);
+    color:white;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1000px){
+
+    .sidebar{
+        display:none;
+    }
+
+    .main-content{
+        margin-left:0;
+        width:100%;
+    }
+
+    .grid-2,
+    .grid-3{
+        grid-template-columns:1fr;
+    }
+
+    .profile-box{
+        flex-direction:column;
+        text-align:center;
+    }
+
+}
+
+</style>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+
+        <div class="logo">
+            NutriAI
+        </div>
+
+        <div class="sidebar-menu">
+
+            <a href="/" class="active">🏠 Dashboard</a>
+
+            <a href="/profile">👤 Profile</a>
+
+            <a href="/predict">🍔 Detect Food</a>
+
+            <a href="/history">📊 Analytics</a>
+
+            <a href="/edit_profile">⚙ Settings</a>
+
+            <a href="/download_csv">⬇ Reports</a>
+
+            <a href="/logout">🚪 Logout</a>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+
+    <div class="main-content">
+
+        <!-- TOPBAR -->
+
+        <div class="topbar">
+
+            <div>
+                <p style="color:#94a3b8;">Pages / Dashboard</p>
+                <h1>Main Dashboard</h1>
+            </div>
+
+            <div class="profile-small">
+
+                <img src="{{ url_for('static', filename='profile_pics/' + (user['profile_pic'] if user['profile_pic'] else 'default.png')) }}">
+
+            </div>
+
+        </div>
+
+        <!-- STATS -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <p>Total Calories</p>
+                <h2>{{ totals["calories"] }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Protein Intake</p>
+                <h2>{{ totals["protein"] }}g</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Carbs</p>
+                <h2>{{ totals["carbs"] }}g</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Fat</p>
+                <h2>{{ totals["fat"] }}g</h2>
+            </div>
+
+        </div>
+
+        <!-- GRAPH + GOALS -->
+
+        <div class="grid-2">
+
+            <!-- GRAPH -->
+
+            <div class="card">
+
+                <h2>📈 Calories Analytics</h2>
+
+                <canvas id="calorieChart"></canvas>
+
+            </div>
+
+            <!-- GOALS -->
+
+            <div class="card">
+
+                <h2>🎯 Daily Goals</h2>
+
+                <br>
+
+                <p>Calories</p>
+                <progress value="{{ totals['calories'] }}" max="2000"></progress>
+
+                <p>Protein</p>
+                <progress value="{{ totals['protein'] }}" max="100"></progress>
+
+                <p>Water</p>
+                <progress value="{{ water }}" max="3000"></progress>
+
+                <br>
+
+                <h3>
+                    Goal Completion :
+                    {{ goal_percent }}%
+                </h3>
+
+            </div>
+
+        </div>
+
+        <!-- PROFILE + SCORE + INSIGHT -->
+
+        <div class="grid-3">
+
+            <!-- PROFILE -->
+
+            <div class="card">
+
+                <div class="profile-box">
+
+                    <img src="{{ url_for('static', filename='profile_pics/' + (user['profile_pic'] if user['profile_pic'] else 'default.png')) }}">
+
+                    <div class="profile-details">
+
+                        <h2>{{ user['name'] }}</h2>
+
+                        <p>📧 {{ user['email'] }}</p>
+
+                        <p>🎯 {{ user['goal'] }}</p>
+
+                        <p>⚖ BMI : {{ bmi }}</p>
+
+                        <p>🏆 {{ badge }}</p>
+
+                        <a href="/edit_profile" class="btn">
+                            Edit Profile
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- HEALTH SCORE -->
+
+            <div class="card">
+
+                <h2 style="margin-bottom:20px;">
+                    🧠 Health Score
+                </h2>
+
+                <div class="score-circle"
+                     style="--score: {{ health_score }}">
+
+                    {{ health_score }}
+
+                </div>
+
+            </div>
+
+            <!-- AI INSIGHT -->
+
+            <div class="card">
+
+                <h2>🤖 AI Insight</h2>
+
+                <br>
+
+                <p style="line-height:1.8; color:#cbd5e1;">
+
+                    {{ insight }}
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- WEEKLY SUMMARY -->
+
+        <div class="card">
+
+            <h2>📊 Weekly Summary</h2>
+
+            <div class="stats-grid" style="margin-top:20px;">
+
+                <div class="stat-card">
+                    <p>Avg Calories</p>
+                    <h2>{{ weekly_avg["calories"] }}</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>Avg Protein</p>
+                    <h2>{{ weekly_avg["protein"] }}</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>Avg Carbs</p>
+                    <h2>{{ weekly_avg["carbs"] }}</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>Avg Fat</p>
+                    <h2>{{ weekly_avg["fat"] }}</h2>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FOOD HISTORY -->
+
+        <div class="card" style="margin-top:25px;">
+
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+
+                <h2>🍽 Food History</h2>
+
+                <a href="/download_csv" class="btn">
+                    Download CSV
+                </a>
+
+            </div>
+
+            <!-- SEARCH -->
+
+            <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+
+                <input type="text"
+                       id="searchInput"
+                       placeholder="Search Food">
+
+                <input type="date"
+                       id="dateFilter">
+
+                <button onclick="clearFilter()" class="btn">
+                    Reset
+                </button>
+
+            </div>
+
+            {% if history %}
+
+            <div style="overflow-x:auto;">
+
+                <table id="foodTable">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Food</th>
+                            <th>Calories</th>
+                            <th>Protein</th>
+                            <th>Carbs</th>
+                            <th>Fat</th>
+                            <th>Date</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in history %}
+
+                        <tr>
+
+                            <td>{{ item["food"] }}</td>
+                            <td>{{ item["calories"] }}</td>
+                            <td>{{ item["protein"] }}</td>
+                            <td>{{ item["carbs"] }}</td>
+                            <td>{{ item["fat"] }}</td>
+                            <td>{{ item["date"] }}</td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <p style="margin-top:20px;">
+                No history found
+            </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- CHART JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const labels = [
+
+    {% for row in graph_data %}
+
+        "{{ row['date'] }}",
+
+    {% endfor %}
+
+];
+
+const data = [
+
+    {% for row in graph_data %}
+
+        {{ row['total_calories'] }},
+
+    {% endfor %}
+
+];
+
+const ctx = document.getElementById('calorieChart').getContext('2d');
+
+new Chart(ctx, {
+
+    type:'line',
+
+    data:{
+
+        labels:labels,
+
+        datasets:[{
+
+            label:'Calories',
+
+            data:data,
+
+            borderColor:'#ff9f43',
+
+            backgroundColor:'rgba(255,159,67,0.08)',
+
+            fill:true,
+
+            tension:0.4,
+
+            borderWidth:3,
+
+            pointRadius:5
+
+        }]
+
+    },
+
+    options:{
+
+        responsive:true,
+
+        plugins:{
+
+            legend:{
+                labels:{
+                    color:'white'
+                }
+            }
+
+        },
+
+        scales:{
+
+            x:{
+                ticks:{
+                    color:'white'
+                }
+            },
+
+            y:{
+                ticks:{
+                    color:'white'
+                }
+            }
+
+        }
+
+    }
+
+});
+
+</script>
+
+<!-- FILTER -->
+
+<script>
+
+const searchInput = document.getElementById("searchInput");
+const dateFilter = document.getElementById("dateFilter");
+const table = document.getElementById("foodTable");
+
+function filterTable(){
+
+    const searchValue = searchInput.value.toLowerCase();
+    const dateValue = dateFilter.value;
+
+    const rows = table.getElementsByTagName("tr");
+
+    for(let i=1;i<rows.length;i++){
+
+        const food = rows[i].cells[0].innerText.toLowerCase();
+        const date = rows[i].cells[5].innerText;
+
+        let show = true;
+
+        if(searchValue && !food.includes(searchValue)){
+            show = false;
+        }
+
+        if(dateValue && !date.includes(dateValue)){
+            show = false;
+        }
+
+        rows[i].style.display = show ? "" : "none";
+
+    }
+
+}
+
+searchInput.addEventListener("keyup",filterTable);
+dateFilter.addEventListener("change",filterTable);
+
+function clearFilter(){
+
+    searchInput.value = "";
+    dateFilter.value = "";
+
+    filterTable();
+
+}
+
+</script>
+
+{% endblock %}

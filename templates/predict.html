@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="app-v3">
+
+<!-- ================= TOP SYSTEM STATUS ================= -->
+<div class="system-bar">
+    <div>🧠 AI Nutrition OS</div>
+    <div class="live">● Neural Model Active</div>
+</div>
+
+<!-- ================= HERO ================= -->
+<section class="hero-v3">
+    <h1>🍎 AI Food Intelligence Engine</h1>
+    <p>Next-generation nutrition analysis powered by computer vision + diet AI</p>
+
+    <div class="meta-tags">
+        <span>📊 Macro Tracking</span>
+        <span>🍛 Indian Food AI Model</span>
+        <span>🎤 Voice + Image Input</span>
+        <span>⚡ Real-time Nutrition Sync</span>
+    </div>
+</section>
+
+<!-- ================= CORE DASHBOARD ================= -->
+<div class="grid-v3">
+
+    <!-- LEFT: SCANNER -->
+    <div class="card-v3">
+
+        <h2>📷 Food Detection System</h2>
+
+        <p class="desc">
+            Upload image or use live camera. AI identifies food, estimates portion size,
+            and calculates complete nutrition breakdown.
+        </p>
+
+        <!-- UPLOAD -->
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Upload Food Image</label>
+            <input type="file" name="file">
+            <button>🚀 Analyze Nutrition</button>
+        </form>
+
+        <hr>
+
+        <!-- CAMERA -->
+        <h3>🎥 Live Food Scanner</h3>
+
+        <div class="camera-box">
+            <span class="badge">REAL-TIME AI</span>
+            <video id="video" autoplay playsinline></video>
+        </div>
+
+        <div class="btn-row">
+            <button onclick="startCamera()">▶ Start AI Vision</button>
+            <button class="danger" onclick="captureImage()">📸 Detect Food</button>
+        </div>
+
+        <canvas id="canvas"></canvas>
+
+        <form id="cameraForm" method="POST" action="/predict">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="image_data" id="image_data">
+        </form>
+
+    </div>
+
+    <!-- RIGHT: AI INTELLIGENCE PANEL -->
+    <div class="card-v3 info">
+
+        <h2>🧠 AI Nutrition Brain</h2>
+
+        <div class="info-block">
+            <h3>🍽️ Food Recognition Model</h3>
+            <p>Trained on Indian + global dataset (vada pav, biryani, dosa, burger etc.)</p>
+        </div>
+
+        <div class="info-block">
+            <h3>⚖️ Portion Estimation Engine</h3>
+            <p>Detects quantity (1 plate, half plate, grams estimation AI)</p>
+        </div>
+
+        <div class="info-block">
+            <h3>🔥 Calorie Computation Layer</h3>
+            <p>Real-time macro calculation: carbs, protein, fats breakdown</p>
+        </div>
+
+        <div class="info-block">
+            <h3>📈 Diet Impact Analyzer</h3>
+            <p>Predicts weight impact based on daily intake pattern</p>
+        </div>
+
+        <div class="info-block highlight">
+            <h3>⚡ Smart Recommendation AI</h3>
+            <p>Suggests next meal to balance nutrition automatically</p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= INSIGHTS SECTION ================= -->
+<section class="insights">
+
+    <h2>📊 Daily AI Insights</h2>
+
+    <div class="insight-grid">
+
+        <div>🔥 Fat Burn Status: Active</div>
+        <div>🍽️ Calorie Balance: -280 kcal</div>
+        <div>💪 Protein Score: Medium</div>
+        <div>⚠️ Carb Warning: Slightly High</div>
+
+    </div>
+
+</section>
+
+</div>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+
+let video = document.getElementById("video");
+let stream;
+
+function startCamera(){
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(s=>{
+        stream = s;
+        video.srcObject = stream;
+    })
+    .catch(()=>alert("Camera access denied"));
+}
+
+function captureImage(){
+
+    if(!stream){
+        alert("Start camera first");
+        return;
+    }
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.drawImage(video,0,0);
+
+    document.getElementById("image_data").value =
+        canvas.toDataURL("image/jpeg");
+
+    stream.getTracks().forEach(t=>t.stop());
+
+    document.getElementById("cameraForm").submit();
+}
+
+</script>
+
+{% endblock %}

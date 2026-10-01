@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+
+.edit-container {
+    max-width: 500px;
+    margin: auto;
+    background: rgba(255,255,255,0.08);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+}
+
+.save-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(45deg,#00ffc8,#00ff9d);
+    border: none;
+    border-radius: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+/* 🔥 IMAGE PREVIEW */
+.preview-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: block;
+    margin: 10px auto;
+    object-fit: cover;
+    border: 2px solid #00ffc8;
+}
+
+</style>
+
+<div class="edit-container">
+
+    <h1>✏ Edit Profile</h1>
+
+    <form method="POST" class="edit-form" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <!-- 🔥 CURRENT PHOTO -->
+        <img id="preview"
+        src="{{ url_for('static', filename='profile_pics/' + (user['profile_pic'] if user['profile_pic'] else 'default.png')) }}"
+        class="preview-img">
+
+        <!-- NAME -->
+        <div class="input-group">
+            <label>Name</label>
+            <input type="text" name="name" value="{{ user['name'] }}" required>
+        </div>
+
+        <!-- AGE -->
+        <div class="input-group">
+            <label>Age</label>
+            <input type="number" name="age" value="{{ user['age'] }}">
+        </div>
+
+        <!-- WEIGHT -->
+        <div class="input-group">
+            <label>Weight (kg)</label>
+            <input type="number" name="weight" value="{{ user['weight'] }}">
+        </div>
+
+        <!-- TARGET -->
+        <div class="input-group">
+            <label>Target Weight (kg)</label>
+            <input type="number" name="target_weight"
+            value="{{ user['target_weight'] if user['target_weight'] else '' }}">
+        </div>
+
+        <!-- HEIGHT -->
+        <div class="input-group">
+            <label>Height (cm)</label>
+            <input type="number" name="height" value="{{ user['height'] }}">
+        </div>
+
+        <!-- GOAL -->
+        <div class="input-group">
+            <label>Goal</label>
+            <select name="goal">
+                <option value="weight_loss" {% if user['goal']=='weight_loss' %}selected{% endif %}>Weight Loss</option>
+                <option value="muscle_gain" {% if user['goal']=='muscle_gain' %}selected{% endif %}>Muscle Gain</option>
+                <option value="maintain" {% if user['goal']=='maintain' %}selected{% endif %}>Maintain</option>
+            </select>
+        </div>
+
+        <!-- PHOTO -->
+        <div class="input-group">
+            <label>Profile Photo</label>
+            <input type="file" name="profile_pic" accept="image/*" onchange="previewImage(event)">
+        </div>
+
+        <button type="submit" class="save-btn">💾 Save Changes</button>
+
+    </form>
+
+</div>
+
+<!-- 🔥 PREVIEW SCRIPT -->
+<script>
+function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function(){
+        document.getElementById("preview").src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+</script>
+
+{% endblock %}

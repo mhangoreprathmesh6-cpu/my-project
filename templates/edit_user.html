@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+
+<h2>Edit User</h2>
+
+<form method="POST">
+
+<label>Name</label><br>
+<input type="text" name="name" value="{{ user[1] }}" required><br><br>
+
+<label>Email</label><br>
+<input type="email" name="email" value="{{ user[2] }}" required><br><br>
+
+<!-- ROLE -->
+<label>
+    <input type="checkbox" name="admin"
+    {% if user[8] == "admin" %} checked {% endif %}>
+    Admin
+</label><br><br>
+
+<!-- STATUS -->
+<label>
+    <input type="checkbox" name="active"
+    {% if user[9] == "active" %} checked {% endif %}>
+    Active
+</label><br><br>
+
+<button type="submit">Update User</button>
+
+</form>
+
+</div>
+
+{% endblock %}

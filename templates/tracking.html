@@ -1,0 +1,579 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+
+/* 🌌 BACKGROUND */
+body {
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    font-family: 'Poppins';
+    color: white;
+}
+
+/* 🧊 CARD */
+.card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    padding: 25px;
+    margin: 25px auto;
+    border-radius: 20px;
+    max-width: 900px;
+    box-shadow: 0 0 25px rgba(0,255,200,0.15);
+}
+
+/* 🔲 GRID */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* FORM GRID */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.full { grid-column: span 2; }
+
+/* NUTRITION */
+.nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+}
+
+/* INPUT */
+input, select {
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(0,0,0,0.5);
+    color: white;
+}
+
+/* BTN */
+button {
+    background: linear-gradient(45deg,#00ffc8,#00bfff);
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* BUTTON GROUP */
+.btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+.ai-btn {
+    background: transparent;
+    border: 1px solid #00ffc8;
+    color: #00ffc8;
+}
+
+.save-btn {
+    flex: 1;
+}
+
+/* TOTAL */
+.total-box {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(0,255,200,0.15);
+    text-align: center;
+}
+
+/* SUMMARY */
+.summary {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 10px;
+}
+
+.box {
+    padding: 15px;
+    text-align: center;
+    background: rgba(0,255,200,0.1);
+    border-radius: 12px;
+    font-weight: bold;
+}
+/* ================= GLOBAL CANVAS ================= */
+canvas {
+    width: 100% !important;
+    height: 300px !important;
+    display: block;
+}
+
+/* ================= GRID SYSTEM ================= */
+.chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+/* ================= CHART BOX ================= */
+.chart-box {
+    position: relative;
+    padding: 30px;
+    border-radius: 22px;
+
+    min-height: 380px;   /* 🔥 main fix */
+
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.5),
+        0 0 25px rgba(0,255,200,0.2);
+
+    transition: 0.35s ease;
+}
+.chart-box canvas {
+    width: 100% !important;
+    height: 320px !important;   /* 🔥 increased */
+}
+#pieChart {
+    height: 260px !important;
+    max-width: 260px;
+    margin: 0 auto;   /* center */
+
+}
+/* 🔥 HOVER (FLOAT EFFECT) */
+.chart-box:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow:
+        0 12px 35px rgba(0,0,0,0.6),
+        0 0 50px rgba(0,255,200,0.4);
+}
+
+/* ================= TITLE ================= */
+.chart-box h3 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+
+    background: linear-gradient(45deg,#00ffc8,#00bfff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ================= GLOW BORDER ================= */
+.chart-box::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 1px;
+
+    background: linear-gradient(120deg,#00ffc8,#00bfff,transparent);
+
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+
+    opacity: 0.6;
+}
+
+/* ================= INNER GLOW ================= */
+.chart-box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+
+    background: radial-gradient(circle at top left, rgba(0,255,200,0.15), transparent 60%);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width: 900px) {
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-box {
+        min-height: 320px;
+    }
+
+    .chart-box canvas {
+        height: 260px !important;
+    }
+}
+
+/* ================= EXTRA POLISH ================= */
+
+/* smooth chart container */
+.chart-box canvas {
+    border-radius: 12px;
+}
+
+/* subtle pulse animation */
+@keyframes glowPulse {
+    0% { box-shadow: 0 0 20px rgba(0,255,200,0.15); }
+    50% { box-shadow: 0 0 40px rgba(0,255,200,0.35); }
+    100% { box-shadow: 0 0 20px rgba(0,255,200,0.15); }
+}
+
+.chart-box:hover::after {
+    animation: glowPulse 2s infinite;
+}
+
+
+</style>
+
+<!-- ================== DAILY TRACKING ================== -->
+<div class="card">
+<h2>📊 Daily Tracking</h2>
+
+<form method="POST">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<input type="hidden" name="type" value="daily">
+
+<div class="grid">
+<input name="calories" placeholder="Calories">
+<input name="water" placeholder="Water (ml)">
+<input name="cal_goal" placeholder="Calories Goal">
+<input name="water_goal" placeholder="Water Goal">
+</div>
+
+<br>
+<button>Save</button>
+</form>
+</div>
+
+
+<!-- ================== ADD FOOD ENTRY ================== -->
+<div class="card">
+<h2>🍽 Add Food Entry</h2>
+
+<form method="POST">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<input type="hidden" name="type" value="food">
+
+<div class="form-grid">
+
+    <div class="full">
+        <label>Food Description</label>
+        <input type="text" name="food" required>
+    </div>
+
+    <input type="number" name="quantity" value="1" placeholder="Quantity">
+
+    <select name="unit">
+        <option>Serving</option>
+        <option>Grams</option>
+    </select>
+
+    <select name="meal">
+        <option>Breakfast</option>
+        <option>Lunch</option>
+        <option>Dinner</option>
+    </select>
+
+    <select name="category">
+        <option>Fruit</option>
+        <option>Protein</option>
+        <option>Carbs</option>
+    </select>
+
+</div>
+
+<hr>
+
+<h3>⚡ Nutrition Info</h3>
+
+<label>Calories</label>
+<input type="number" name="food_calories" id="calories" oninput="calcTotal()">
+
+<div class="nutrition-grid">
+    <input type="number" name="protein" id="protein" placeholder="Protein (g)" oninput="calcTotal()">
+    <input type="number" name="carbs" id="carbs" placeholder="Carbs (g)" oninput="calcTotal()">
+    <input type="number" name="fat" id="fat" placeholder="Fat (g)" oninput="calcTotal()">
+</div>
+
+<div class="total-box" id="total">
+    Total: 0 kcal
+</div>
+
+<div class="btn-group">
+    <button type="button" class="ai-btn" onclick="goAI()">🤖 AI Analyzer</button>
+    <button type="submit" class="save-btn">💾 Save Entry</button>
+</div>
+
+</form>
+</div>
+
+
+<!-- ================== SUMMARY ================== -->
+<div class="card">
+<h2>🔥 Today Summary</h2>
+
+<div class="summary">
+    <div class="box">Calories<br>{{ calories }}</div>
+    <div class="box">Water<br>{{ water }}</div>
+    <div class="box">Protein<br>{{ total_protein }}</div>
+    <div class="box">Carbs<br>{{ total_carbs }}</div>
+    <div class="box">Fat<br>{{ total_fat }}</div>
+</div>
+
+<br>
+
+<p>Calories Goal: {{ cal_goal }}</p>
+<progress value="{{ calories }}" max="{{ cal_goal }}"></progress>
+
+<p>Water Goal: {{ water_goal }}</p>
+<progress value="{{ water }}" max="{{ water_goal }}"></progress>
+
+</div>
+
+
+<!-- ================== CHART ================== -->
+<!-- 📊 Weekly Chart -->
+<div class="card chart-card">
+    <h3>📊 Weekly Calories</h3>
+    <canvas id="barChart"></canvas>
+</div>
+
+<!-- 🍩 Pie Chart -->
+<div class="card chart-card">
+    <h3>🍩 Calories vs Water</h3>
+    <canvas id="pieChart"></canvas>
+</div>
+
+<!-- 📈 Line Chart -->
+<div class="card chart-card">
+    <h3>📈 Weekly Trend</h3>
+    <canvas id="lineChart"></canvas>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const calories = {{ calories or 0 }};
+const water = {{ water or 0 }};
+let weeklyData = {{ weekly_data | tojson }};
+
+// ✅ Always 7 days fix
+const labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+while (weeklyData.length < 7) weeklyData.unshift(0);
+
+// 🔥 COMMON OPTIONS (REUSABLE)
+const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            labels: {
+                color: "#e0e0e0",
+                font: { size: 13, weight: "bold" }
+            }
+        },
+        tooltip: {
+            backgroundColor: "#111",
+            titleColor: "#00ffc8",
+            bodyColor: "#fff",
+            borderColor: "#00ffc8",
+            borderWidth: 1,
+            padding: 10
+        }
+    },
+    animation: {
+        duration: 1200,
+        easing: "easeOutQuart"
+    },
+    scales: {
+        x: {
+            ticks: { color: "#bbb" },
+            grid: { color: "rgba(255,255,255,0.05)" }
+        },
+        y: {
+            ticks: { color: "#bbb" },
+            grid: { color: "rgba(255,255,255,0.05)" }
+        }
+    }
+};
+
+// ================= 🔥 BAR CHART =================
+const barCtx = document.getElementById("barChart").getContext("2d");
+
+// gradient
+const barGradient = barCtx.createLinearGradient(0,0,0,300);
+barGradient.addColorStop(0, "#00ffc8");
+barGradient.addColorStop(1, "#008cff");
+
+new Chart(barCtx, {
+    type: "bar",
+    data: {
+        labels: labels,
+        datasets: [{
+            label: "Calories Intake",
+            data: weeklyData,
+            backgroundColor: barGradient,
+            borderRadius: 10,
+            borderSkipped: false
+        }]
+    },
+    options: {
+        ...commonOptions
+    }
+});
+
+
+// ================= 🍩 DOUGHNUT =================
+
+const pieCtx = document.getElementById("pieChart").getContext("2d");
+
+// ⚠️ NORMALIZATION (IMPORTANT)
+const maxVal = Math.max(calories, water, 1);
+const calPercent = (calories / maxVal) * 100;
+const waterPercent = (water / maxVal) * 100;
+
+// 🎨 gradients
+const gradCal = pieCtx.createLinearGradient(0,0,0,200);
+gradCal.addColorStop(0,"#ff6a00");
+gradCal.addColorStop(1,"#ff2e63");
+
+const gradWater = pieCtx.createLinearGradient(0,0,0,200);
+gradWater.addColorStop(0,"#00c6ff");
+gradWater.addColorStop(1,"#0072ff");
+
+// 🔥 CENTER TEXT PLUGIN
+const centerText = {
+    id: 'centerText',
+    beforeDraw(chart) {
+        const {width} = chart;
+        const {height} = chart;
+        const ctx = chart.ctx;
+
+        ctx.restore();
+
+        const fontSize = (height / 210).toFixed(2);
+        ctx.font = fontSize + "em sans-serif";
+        ctx.textBaseline = "middle";
+
+        const text = calories + " kcal";
+        const textX = Math.round((width - ctx.measureText(text).width) / 2);
+        const textY = height / 2;
+
+        ctx.fillStyle = "#00ffc8";
+        ctx.fillText(text, textX, textY);
+
+        ctx.save();
+    }
+};
+
+new Chart(pieCtx, {
+    type: "doughnut",
+    data: {
+        labels: ["Calories", "Water"],
+        datasets: [{
+            data: [calPercent, waterPercent], // 🔥 FIXED SCALE
+            backgroundColor: [gradCal, gradWater],
+            borderWidth: 0,
+            hoverOffset: 18
+        }]
+    },
+    options: {
+        cutout: "72%",
+        layout: {
+            padding: 15
+        },
+        plugins: {
+            legend: {
+                position: "bottom",
+                labels: {
+                    color: "#fff",
+                    font: {
+                        size: 13,
+                        weight: "bold"
+                    },
+                    padding: 18
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        if (context.label === "Calories")
+                            return "Calories: " + calories + " kcal";
+                        else
+                            return "Water: " + water + " ml";
+                    }
+                }
+            }
+        },
+        animation: {
+            animateRotate: true,
+            animateScale: true,
+            duration: 1200
+        }
+    },
+    plugins: [centerText]
+});
+
+
+// ================= 📈 LINE CHART =================
+const lineCtx = document.getElementById("lineChart").getContext("2d");
+
+// gradient fill
+const lineGradient = lineCtx.createLinearGradient(0,0,0,250);
+lineGradient.addColorStop(0,"rgba(0,255,200,0.4)");
+lineGradient.addColorStop(1,"rgba(0,255,200,0)");
+
+new Chart(lineCtx, {
+    type: "line",
+    data: {
+        labels: labels,
+        datasets: [{
+            label: "Weekly Trend",
+            data: weeklyData,
+            borderColor: "#00ffc8",
+            backgroundColor: lineGradient,
+            fill: true,
+            tension: 0.35,
+            borderWidth: 2.5,
+            pointBackgroundColor: "#00ffc8",
+            pointRadius: 4,
+            pointHoverRadius: 7
+        }]
+    },
+    options: {
+        ...commonOptions,
+        plugins: {
+            legend: { display: false }
+        }
+    }
+});
+</script>
+<script>
+function calcTotal() {
+    let c = parseFloat(document.getElementById("calories").value) || 0;
+    let p = parseFloat(document.getElementById("protein").value) || 0;
+    let carbs = parseFloat(document.getElementById("carbs").value) || 0;
+    let f = parseFloat(document.getElementById("fat").value) || 0;
+
+    let total = c || (p*4 + carbs*4 + f*9);
+
+    document.getElementById("total").innerText =
+        "Total: " + total + " kcal";
+}
+
+function goAI() {
+    window.location.href = "/predict";
+}
+</script>
+
+{% endblock %}

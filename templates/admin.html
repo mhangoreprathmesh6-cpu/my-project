@@ -1,0 +1,483 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="/static/admin.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="admin-container">
+
+<!-- ================= DASHBOARD ================= -->
+
+{% if tab == "dashboard" %}
+
+<div class="top-header">
+
+    <div>
+        <h1 class="page-title">Admin Dashboard</h1>
+        <p class="page-subtitle">
+            Manage users, analytics and nutrition system
+        </p>
+    </div>
+
+    <a href="/create" class="btn-primary">
+        + Create User
+    </a>
+
+</div>
+
+<!-- SEARCH -->
+
+<form class="search-bar" method="GET">
+
+    <input type="hidden" name="tab" value="dashboard">
+
+    <input
+        type="text"
+        name="q"
+        placeholder="Search user..."
+    >
+
+    <select name="filter">
+
+        <option value="all">All</option>
+        <option value="admin">Admin</option>
+        <option value="active">Active</option>
+        <option value="blocked">Blocked</option>
+
+    </select>
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>
+
+<!-- STATS -->
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <h2>{{ total }}</h2>
+        <p>Total Users</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ active }}</h2>
+        <p>Active Users</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ admins }}</h2>
+        <p>Admins</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ blocked }}</h2>
+        <p>Blocked Users</p>
+    </div>
+
+</div>
+
+<!-- USERS -->
+
+<div class="users-grid">
+
+{% for u in users %}
+
+<div class="user-card">
+
+    <div class="user-top">
+
+        <div>
+
+            <h3>{{ u.name }}</h3>
+
+            <p class="email">
+                {{ u.email }}
+            </p>
+
+        </div>
+
+        {% if u.role == "admin" %}
+            <span class="badge admin-badge">
+                ADMIN
+            </span>
+        {% else %}
+            <span class="badge user-badge">
+                USER
+            </span>
+        {% endif %}
+
+    </div>
+
+    <div class="status-row">
+        <p class="created-date">
+             Created :
+            {{ u.created_at if u.created_at else "No Date" }}
+        </p>
+
+        {% if u.status == "active" %}
+            <span class="status active-status">
+                Active
+            </span>
+        {% else %}
+            <span class="status blocked-status">
+                Blocked
+            </span>
+        {% endif %}
+
+    </div>
+
+    <div class="actions">
+
+        <a href="/edit/{{u.id}}" class="btn edit-btn">
+            Edit
+        </a>
+
+        <a href="/toggle/{{u.id}}" class="btn toggle-btn">
+
+            {% if u.status == "active" %}
+                Suspend
+            {% else %}
+                Activate
+            {% endif %}
+
+        </a>
+
+        <a href="/delete/{{u.id}}" class="btn delete-btn">
+            Delete
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+<!-- ================= ANALYTICS ================= -->
+
+{% if tab == "analytics" %}
+
+<h1 class="page-title">
+    Analytics Dashboard
+</h1>
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <h2>{{ total_users }}</h2>
+        <p>Total Users</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ active_count }}</h2>
+        <p>Active Users</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ admins_count }}</h2>
+        <p>Total Admins</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ avg_bmi }}</h2>
+        <p>Average BMI</p>
+    </div>
+
+</div>
+
+<!-- CHARTS -->
+
+<div class="charts-grid">
+
+    <div class="chart-card">
+
+        <h2>User Growth</h2>
+
+        <canvas id="growthChart"></canvas>
+
+    </div>
+
+    <div class="chart-card">
+
+        <h2>Calories Analytics</h2>
+
+        <canvas id="calorieChart"></canvas>
+
+    </div>
+
+</div>
+
+<!-- MOST ACTIVE -->
+
+<div class="charts-grid">
+
+    <div class="chart-card">
+
+        <h2>Most Active Users</h2>
+
+        {% for item in active_users %}
+
+        <div class="activity-item">
+
+            <span>{{ item.name }}</span>
+
+            <b>{{ item.total }}</b>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <div class="chart-card">
+
+        <h2>Most Eaten Foods</h2>
+
+        {% for food in foods %}
+
+        <div class="activity-item">
+
+            <span>{{ food.food }}</span>
+
+            <b>{{ food.total }}</b>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<!-- RECENT -->
+
+<div class="chart-card">
+
+    <h2>Recent Activity</h2>
+
+    {% for item in recent_activity %}
+
+    <div class="activity-item">
+
+        <span>
+            {{ item.name }} ate {{ item.food }}
+        </span>
+
+        <small>{{ item.date }}</small>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- EXPORT -->
+
+<div class="export-buttons">
+
+    <a href="/export_users_csv" class="btn-primary">
+        Export CSV
+    </a>
+
+    <a href="/export_users_excel" class="btn-primary">
+        Export Excel
+    </a>
+
+    <a href="/export_users_pdf" class="btn-primary">
+        Export PDF
+    </a>
+
+</div>
+
+{% endif %}
+
+<!-- ================= NUTRITION ================= -->
+
+{% if tab == "nutrition" %}
+
+<h1 class="page-title">
+    Nutrition Control
+</h1>
+
+<form method="POST" action="/admin?tab=nutrition" class="food-form">
+
+    <input type="text" name="name" placeholder="Food Name">
+
+    <input type="number" name="calories" placeholder="Calories">
+
+    <input type="number" name="protein" placeholder="Protein">
+
+    <input type="number" name="carbs" placeholder="Carbs">
+
+    <input type="number" name="fat" placeholder="Fat">
+
+    <button type="submit">
+        Add Food
+    </button>
+
+</form>
+
+<div class="users-grid">
+
+{% for f in foods %}
+
+<div class="user-card">
+
+    <h3>{{ f.name }}</h3>
+
+    <p>Calories : {{ f.calories }}</p>
+    <p>Protein : {{ f.protein }}</p>
+    <p>Carbs : {{ f.carbs }}</p>
+    <p>Fat : {{ f.fat }}</p>
+
+    <a href="/delete_food/{{f.id}}" class="btn delete-btn">
+        Delete
+    </a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+<!-- ================= MODEL ================= -->
+
+{% if tab == "model" %}
+
+<div class="chart-card">
+
+    <h1>AI Model Accuracy</h1>
+
+    <div class="big-number">
+        {{ accuracy }}%
+    </div>
+
+</div>
+
+{% endif %}
+
+<!-- ================= DATASET ================= -->
+
+{% if tab == "dataset" %}
+
+<h1 class="page-title">
+    Dataset Upload
+</h1>
+
+<form method="POST"
+      action="/admin?tab=dataset"
+      enctype="multipart/form-data"
+      class="food-form">
+
+    <input type="file" name="image">
+
+    <input type="text" name="label" placeholder="Label">
+
+    <button type="submit">
+        Upload
+    </button>
+
+</form>
+
+<div class="users-grid">
+
+{% for d in data %}
+
+<div class="user-card">
+
+    <img src="/{{ d.image }}"
+         class="dataset-image">
+
+    <p>{{ d.label }}</p>
+
+    <a href="/delete_data/{{d.id}}" class="btn delete-btn">
+        Delete
+    </a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+</div>
+
+<!-- CHART SCRIPT -->
+
+<script>
+
+const growthCtx = document.getElementById("growthChart");
+
+if(growthCtx){
+
+new Chart(growthCtx, {
+
+    type: "line",
+
+    data: {
+
+        labels: [
+            {% for row in growth_data %}
+                "{{ row.day }}",
+            {% endfor %}
+        ],
+
+        datasets: [{
+            label: "Users",
+            data: [
+                {% for row in growth_data %}
+                    {{ row.total }},
+                {% endfor %}
+            ],
+            borderWidth: 3,
+            tension: 0.4
+        }]
+    }
+
+});
+
+}
+
+const calorieCtx = document.getElementById("calorieChart");
+
+if(calorieCtx){
+
+new Chart(calorieCtx, {
+
+    type: "bar",
+
+    data: {
+
+        labels: [
+            {% for row in calorie_data %}
+                "{{ row.day }}",
+            {% endfor %}
+        ],
+
+        datasets: [{
+            label: "Calories",
+            data: [
+                {% for row in calorie_data %}
+                    {{ row.calories }},
+                {% endfor %}
+            ],
+            borderWidth: 2
+        }]
+    }
+
+});
+
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>NutriTrack</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+
+<body>
+
+<!-- 🔥 BACKGROUND VIDEO -->
+<video autoplay muted loop playsinline class="bg-video">
+    <source src="{{ url_for('static', filename='videos/bg.mp4') }}" type="video/mp4">
+</video>
+
+<div class="overlay"></div>
+
+<!-- NAVBAR -->
+<div class="nav">
+
+    <div class="logo">🍴 NutriTrack</div>
+
+    <div class="links">
+        <a href="/">HOME</a>
+        <a href="/about">ABOUT</a>
+
+        {% if session.get("user") %}
+            <a href="/predict">PREDICT</a>
+            <a href="/tracking">TRACKING</a>
+            <a href="/progress">PROGRESS</a>
+            <a href="/profile">PROFILE</a>
+            <a href="/logout">LOGOUT</a>
+        {% else %}
+            <a href="/login">LOGIN</a>
+            <a href="/register">REGISTER</a>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- 🔥 ADD THIS EXACT BLOCK -->
+{% if request.args.get("msg") == "login_success" %}
+<div style="
+    background:#00ffcc;
+    color:black;
+    padding:12px;
+    text-align:center;
+    border-radius:10px;
+    margin:80px auto 15px auto;
+    width:50%;
+    font-weight:bold;">
+    ✅ Login Successful!
+</div>
+{% endif %}
+
+<!-- HERO SECTION -->
+<div class="hero">
+
+    <div class="left">
+        <h1>
+            Smart <br>
+            Food Recognition & <br>
+            Personalized Diet
+        </h1>
+
+        <p>
+            Track your diet, detect food, and get AI-based personalized
+            nutrition recommendations to stay healthy.
+        </p>
+
+
+    </div>
+
+
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if request.args.get('msg') == 'login_success' %}
+<p style="color:lightgreen; text-align:center;">
+✅ You login successfully
+</p>
+{% endif %}
+
+
+<div class="auth-container">
+
+<div class="auth-card">
+
+<h2>Welcome Back 👋</h2>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div style="color:lime; font-weight:bold;">
+      {% for msg in messages %}
+        <p>{{ msg }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+  {% if request.args.get("msg") == "reset_link_sent" %}
+<p style="color:green;">📩 Reset link sent to your email</p>
+{% endif %}
+
+{% if request.args.get("msg") == "password_reset_success" %}
+<p style="color:green;">✅ Password updated successfully</p>
+{% endif %}
+
+<form method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+
+  <input type="email" name="email" placeholder="Email" required>
+  <input type="password" name="password" placeholder="Password" required>
+  <div style="margin-top:8px;">
+    <a href="/forgot_password" style="
+    display:inline-block;
+    margin-top:10px;
+    color:#00ffcc;
+    font-weight:bold;">
+    🔐 Forgot Password?
+</a>
+ </div>
+
+<button type="submit">Login</button>
+
+</form>
+
+<p>New here? <a href="/register">Create Account</a></p>
+
+</div>
+
+</div>
+
+{% endblock %}

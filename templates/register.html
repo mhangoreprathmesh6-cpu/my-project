@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="auth-container">
+
+<div class="auth-card">
+
+<h2>Create Account 🚀</h2>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div style="color:red; font-weight:bold;">
+      {{ messages[0] }}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<form method="POST">
+     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="text" name="name" placeholder="Full Name" required>
+    <input type="email" name="email" required>
+    <input type="password" name="password" required>
+
+    <input type="number" name="age" placeholder="Age">
+    <input type="number" name="weight" placeholder="Weight (kg)">
+    <input type="number" name="height" placeholder="Height (cm)">
+
+    <select name="goal">
+        <option value="weight_loss">Weight Loss</option>
+        <option value="muscle_gain">Muscle Gain</option>
+        <option value="maintain">Maintain</option>
+    </select>
+
+    <button type="submit">Register</button>
+</form>
+
+<p>Already have account? <a href="/login">Login</a></p>
+
+</div>
+
+</div>
+
+{% endblock %}

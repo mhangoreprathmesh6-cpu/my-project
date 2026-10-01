@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- HERO CTA -->
+    <center>
+        <a href="/ai_diet_plan" class="ai-btn">
+            🔥 Generate AI Diet Plan
+        </a>
+    </center>
+
+    <br><br>
+
+    <!-- QUICK INFO CARDS -->
+    <div class="info-grid">
+
+        <div class="card">
+            <h3>🍽️ Today's Focus</h3>
+            <p>Balanced calorie deficit with high protein diet</p>
+        </div>
+
+        <div class="card">
+            <h3>💪 AI Tip</h3>
+            <p>Drink 2-3L water daily for better fat loss</p>
+        </div>
+
+        <div class="card">
+            <h3>⚡ Smart Insight</h3>
+            <p>Consistency > Intensity for long term results</p>
+        </div>
+
+    </div>
+
+    <br>
+
+    <!-- QUICK ACTIONS -->
+    <div class="action-box">
+
+        <h3>⚡ Quick Actions</h3>
+
+        <a href="/nutrition" class="small-btn">🥗 Food Tracker</a>
+        <a href="/progress" class="small-btn">📊 Progress</a>
+        <a href="/chat" class="small-btn">🤖 AI Coach</a>
+
+    </div>
+
+    <br>
+
+    <!-- MOTIVATION SECTION -->
+    <div class="motivation">
+        <h2>🔥 Stay Consistent</h2>
+        <p>Your body changes when your habits change.</p>
+    </div>
+
+</div>
+
+<style>
+.dashboard-container{
+    padding:20px;
+}
+
+.ai-btn{
+    background: linear-gradient(90deg,#ff4b2b,#ff416c);
+    color:white;
+    padding:15px 25px;
+    border-radius:12px;
+    text-decoration:none;
+    font-weight:bold;
+    display:inline-block;
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:15px;
+    margin-top:20px;
+}
+
+.card{
+    background:#111;
+    color:white;
+    padding:15px;
+    border-radius:12px;
+}
+
+.action-box{
+    margin-top:20px;
+}
+
+.small-btn{
+    margin:5px;
+    padding:10px 15px;
+    background:#222;
+    color:white;
+    border-radius:8px;
+    text-decoration:none;
+    display:inline-block;
+}
+
+.motivation{
+    margin-top:20px;
+    text-align:center;
+    background:#1a1a1a;
+    padding:15px;
+    border-radius:12px;
+    color:white;
+}
+</style>
+
+{% endblock %}

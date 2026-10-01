@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+{% block content %}
+{% if error %}
+    <div style="color:red; font-size:20px; margin-top:20px;">
+        {{ error }}
+    </div>
+{% endif %}
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #141e30, #243b55);
+    color: white;
+}
+
+/* CONTAINER */
+.result-container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 40px;
+    text-align: center;
+}
+
+/* IMAGE */
+.result-img {
+    width: 300px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    margin-bottom: 20px;
+}
+
+/* GLASS CARD */
+.glass-card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    padding: 25px;
+    margin-top: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+/* TOTAL CAL */
+.total-cal {
+    font-size: 40px;
+    color: #00ffc8;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* PROGRESS SECTION */
+.nutri-box {
+    text-align: left;
+    margin-top: 20px;
+}
+
+.nutri-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
+}
+
+/* COLORS */
+.protein { background: #00eaff; }
+.carbs { background: #ffcc00; }
+.fat { background: #ff6384; }
+
+/* TABLE */
+table {
+    width: 80%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.08);
+}
+
+th {
+    background: #00eaff;
+    color: black;
+}
+
+th, td {
+    padding: 12px;
+}
+
+/* CHART */
+.chart-box {
+    width: 350px;
+    height: 350px;
+    margin: 40px auto;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+/* BUTTON */
+.back-btn {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 12px 30px;
+    background: linear-gradient(45deg,#00eaff,#00ff9d);
+    color: black;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.food-name {
+    font-size: 36px;
+    font-weight: bold;
+    color: #00ffc8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(0,255,200,0.7);
+}
+</style>
+
+<div class="result-container">
+
+    <h1>🥗 Nutrition Analysis</h1>
+
+    <img src="/{{ image_path }}" class="result-img">
+
+    <div class="glass-card">
+
+        <div class="food-name">
+        {{ items[0].food if items else "Food" }} 🍽️
+        </div>
+
+        <!-- 🔥 PROGRESS BARS -->
+        <div class="nutri-box">
+
+            <div class="nutri-label">
+                <span>Protein</span>
+                <span>{{ total_protein }} g</span>
+            </div>
+            <div class="bar">
+                <div class="fill protein" style="width: {{ total_protein*2 }}%"></div>
+            </div>
+
+            <div class="nutri-label">
+                <span>Carbs</span>
+                <span>{{ total_carbs }} g</span>
+            </div>
+            <div class="bar">
+                <div class="fill carbs" style="width: {{ total_carbs }}%"></div>
+            </div>
+
+            <div class="nutri-label">
+                <span>Fat</span>
+                <span>{{ total_fat }} g</span>
+            </div>
+            <div class="bar">
+                <div class="fill fat" style="width: {{ total_fat*2 }}%"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <table>
+        <tr>
+            <th>Food</th>
+            <th>Calories</th>
+            <th>Protein</th>
+            <th>Carbs</th>
+            <th>Fat</th>
+        </tr>
+
+        {% for item in items %}
+        <tr>
+            <td>{{ item.food }}</td>
+            <td>{{ item.calories }}</td>
+            <td>{{ item.protein }}</td>
+            <td>{{ item.carbs }}</td>
+            <td>{{ item.fat }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- CHART -->
+    <div class="chart-box">
+        <canvas id="chart"></canvas>
+        <form action="/add_to_tracking" method="POST">
+
+    <input type="hidden" name="calories" value="{{ total_cal }}">
+    <input type="hidden" name="protein" value="{{ total_protein }}">
+    <input type="hidden" name="carbs" value="{{ total_carbs }}">
+    <input type="hidden" name="fat" value="{{ total_fat }}">
+
+    <button class="back-btn">
+        🔥 Add to Tracking
+    </button>
+
+    </form>
+    </div>
+
+    <a href="/predict" class="back-btn">⬅ Try Another</a>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const calories = {{ total_cal }};
+const protein = {{ total_protein }};
+const carbs = {{ total_carbs }};
+const fat = {{ total_fat }};
+
+// 🔥 Convert to calorie contribution
+const proteinCal = protein * 4;
+const carbsCal = carbs * 4;
+const fatCal = fat * 9;
+
+// Total nutrition calories
+const totalNutriCal = proteinCal + carbsCal + fatCal;
+
+// % distribution
+const proteinPercent = ((proteinCal / totalNutriCal) * 100).toFixed(1);
+const carbsPercent = ((carbsCal / totalNutriCal) * 100).toFixed(1);
+const fatPercent = ((fatCal / totalNutriCal) * 100).toFixed(1);
+
+// CHART
+new Chart(document.getElementById('chart'), {
+    type: 'doughnut',
+    data: {
+        labels: [
+            'Protein (' + proteinPercent + '%)',
+            'Carbs (' + carbsPercent + '%)',
+            'Fat (' + fatPercent + '%)'
+        ],
+        datasets: [{
+            data: [proteinCal, carbsCal, fatCal],
+            backgroundColor: [
+                '#00eaff',
+                '#ffcc00',
+                '#ff6384'
+            ],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        cutout: '65%',
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: 'white',
+                    font: { size: 14 }
+                }
+            }
+        }
+    },
+    plugins: [{
+        id: 'centerText',
+        beforeDraw(chart) {
+            const {width} = chart;
+            const {height} = chart;
+            const ctx = chart.ctx;
+
+            ctx.restore();
+            ctx.font = "bold 18px Poppins";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            ctx.fillText(calories + " kcal", width/2, height/2);
+            ctx.save();
+        }
+    }]
+});
+</script>
+
+{% endblock %}

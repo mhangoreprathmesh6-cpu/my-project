@@ -1,0 +1,251 @@
+/* ================= RESET ================= */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family: 'Poppins', sans-serif;
+}
+
+/* ================= BODY ================= */
+body{
+height:100vh;
+background:
+linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+url("../images/food-bg.jpg");
+background-size:cover;
+background-position:center;
+color:white;
+overflow:hidden;
+}
+
+/* ================= NAVBAR ================= */
+.nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 15px 50px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.85);  /* 🔥 darker */
+    backdrop-filter: blur(10px);
+
+    z-index: 1000;   /* 🔥 important */
+}
+
+/* LOGO */
+.logo{
+font-size:28px;
+font-weight:bold;
+color:#ff9800;
+letter-spacing:1px;
+}
+
+/* LINKS */
+.links{
+display:flex;
+gap:30px;
+align-items:center;
+}
+
+.links a{
+color:white;
+text-decoration:none;
+font-size:15px;
+position:relative;
+transition:0.3s;
+}
+
+/* underline animation */
+.links a::after{
+content:"";
+position:absolute;
+bottom:-6px;
+left:0;
+width:0%;
+height:2px;
+background:#ff9800;
+transition:0.3s;
+}
+
+.links a:hover::after{
+width:100%;
+}
+
+/* BUTTON */
+.predict-btn{
+background:linear-gradient(45deg,#ff9800,#ff5722);
+padding:10px 22px;
+border-radius:6px;
+font-weight:bold;
+}
+
+.predict-btn:hover{
+transform:scale(1.05);
+box-shadow:0 5px 15px rgba(255,152,0,0.5);
+}
+
+/* ================= HERO ================= */
+.hero{
+display:flex;
+align-items:center;
+justify-content:space-between;
+height:100vh;
+padding:0 80px;
+}
+
+/* LEFT SIDE */
+.left{
+max-width:600px;
+animation:fadeUp 1s ease;
+}
+
+.left h1{
+font-size:55px;
+line-height:1.2;
+margin-bottom:20px;
+}
+
+.left p{
+color:#ccc;
+font-size:16px;
+margin-bottom:30px;
+line-height:1.6;
+}
+
+/* BUTTON */
+.main-btn{
+background:linear-gradient(45deg,#ff9800,#ff5722);
+padding:15px 35px;
+color:white;
+text-decoration:none;
+border-radius:6px;
+font-weight:bold;
+transition:0.3s;
+}
+
+.main-btn:hover{
+transform:scale(1.08);
+box-shadow:0 10px 25px rgba(255,152,0,0.5);
+}
+
+/* ================= RIGHT IMAGE ================= */
+.right{
+animation:fadeIn 1.5s ease;
+}
+
+.right img{
+width:500px;
+border-radius:20px;
+box-shadow:0 10px 40px rgba(0,0,0,0.6);
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(50px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+}
+to{
+opacity:1;
+}
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:900px){
+
+.hero{
+flex-direction:column;
+text-align:center;
+padding:100px 20px;
+}
+
+.left h1{
+font-size:40px;
+}
+
+.right img{
+width:300px;
+margin-top:30px;
+}
+}
+.hero {
+    margin-top: 80px;   /* navbar height adjust */
+}
+body {
+    padding-top: 80px;   /* navbar height */
+}
+/* RESET */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* 🔥 VIDEO */
+.bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -2;
+}
+
+/* 🔥 OVERLAY */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
+}
+
+/* CONTENT वर आण */
+.nav, .hero {
+    position: relative;
+    z-index: 2;
+    color: white;
+}
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 80px;
+}
+
+.left {
+    max-width: 600px;
+}
+.nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: 500;
+}
+
+.nav a:hover {
+    color: orange;
+}
+.logo {
+    color: orange;
+    font-size: 22px;
+    font-weight: bold;
+}
+.nav {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
+}

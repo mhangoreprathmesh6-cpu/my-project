@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="/static/admin.css">
+<div class="admin-container">
+
+<h2>Dataset</h2>
+
+<form method="post" enctype="multipart/form-data">
+<input type="file" name="image">
+<input name="label">
+<button>Upload</button>
+</form>
+
+<div class="users">
+{% for d in data %}
+<div class="card">
+<p>{{d[2]}}</p>
+<img src="/{{d[1]}}" width="100">
+</div>
+{% endfor %}
+</div>
+
+</div>

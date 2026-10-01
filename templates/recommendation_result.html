@@ -1,0 +1,1668 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard">
+
+    <!-- 🔥 TOP BAR -->
+    <div class="top-bar card">
+        <h2>🔥 Your Daily Target</h2>
+        <div class="top-flex">
+            <div class="cal-circle">
+                {{ total_cal }} kcal
+            </div>
+
+            <!-- 🔥 MACRO CARDS -->
+<h2 class="section-title">📊 Nutrition Overview</h2>
+
+<div class="macro-grid">
+
+    <!-- Calories -->
+    <div class="macro-card">
+        <div class="macro-top">
+            <span>🔥 Calories</span>
+            <b>{{ eaten_cal }}/{{ total_cal }}</b>
+        </div>
+
+        <div class="progress">
+            <div style="width: {{ (eaten_cal/total_cal)*100 }}%"></div>
+        </div>
+
+        <small>{{ remaining_cal }} kcal remaining</small>
+    </div>
+
+    <!-- Protein -->
+    <div class="macro-card">
+        <div class="macro-top">
+            <span>💪 Protein</span>
+            <b>{{ eaten_protein|default(0)|round(1) }}/{{ protein }}g</b>
+        </div>
+
+        <div class="progress protein">
+            <div style="width: {{ (eaten_protein/protein)*100 if protein else 0 }}%"></div>
+        </div>
+
+        <small>
+            {{ (protein - eaten_protein)|round(1) if protein > eaten_protein else 0 }}g remaining
+        </small>
+    </div>
+
+    <!-- Carbs -->
+    <div class="macro-card">
+        <div class="macro-top">
+            <span>🍞 Carbs</span>
+            <b>{{ eaten_carbs|default(0)|round(1) }}/{{ carbs }}g</b>
+        </div>
+
+        <div class="progress carbs">
+            <div style="width: {{ (eaten_carbs/carbs)*100 if carbs else 0 }}%"></div>
+        </div>
+
+        <small>
+            {{ (carbs - eaten_carbs)|round(1) if carbs > eaten_carbs else 0 }}g remaining
+        </small>
+    </div>
+
+    <!-- Fats -->
+    <div class="macro-card">
+        <div class="macro-top">
+            <span>🥑 Fats</span>
+            <b>{{ eaten_fat|default(0)|round(1) }}/{{ fats }}g</b>
+        </div>
+
+        <div class="progress fats">
+            <div style="width: {{ (eaten_fat/fats)*100 if fats else 0 }}%"></div>
+        </div>
+
+        <small>
+            {{ (fats - eaten_fat)|round(1) if fats > eaten_fat else 0 }}g remaining
+        </small>
+    </div>
+
+</div>
+</div>
+</div>
+</div>
+
+    <!-- 🍽 DIET PLAN -->
+
+<div class="card ultra-card">
+
+    <h2 class="glow-title">🍽 AI Diet Plan</h2>
+
+    <div class="meal-grid">
+
+        <div class="meal-box">
+            <h3>🌅 Breakfast</h3>
+            <p>{{ breakfast }}</p>
+        </div>
+
+        <div class="meal-box">
+            <h3>🍛 Lunch</h3>
+            <p>{{ lunch }}</p>
+        </div>
+
+        <div class="meal-box">
+            <h3>🍎 Snack</h3>
+            <p>{{ snack }}</p>
+        </div>
+
+        <div class="meal-box">
+            <h3>🌙 Dinner</h3>
+            <p>{{ dinner }}</p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 🧠 BODY INSIGHTS -->
+
+<div class="card ultra-card">
+
+    <h2 class="glow-title">🧠 AI Body Insights</h2>
+
+    <div class="insight-grid">
+
+        <div class="insight-box">
+            <span>🔥 Metabolism</span>
+
+            {% if total_cal < 1800 %}
+                <h3>Slow</h3>
+                <p>Your calorie requirement is lower than average.</p>
+            {% else %}
+                <h3>Active</h3>
+                <p>Your body requires higher daily fuel.</p>
+            {% endif %}
+        </div>
+
+        <div class="insight-box">
+            <span>💪 Protein Efficiency</span>
+
+            {% if eaten_protein < protein*0.5 %}
+                <h3>Low Intake</h3>
+                <p>Increase protein-rich foods.</p>
+            {% else %}
+                <h3>Good Recovery</h3>
+                <p>Your muscles are receiving enough protein.</p>
+            {% endif %}
+        </div>
+
+        <div class="insight-box">
+            <span>⚡ Energy Status</span>
+
+            {% if remaining_cal > 700 %}
+                <h3>Energy Deficit</h3>
+                <p>You still require more calories today.</p>
+            {% else %}
+                <h3>Balanced</h3>
+                <p>Your energy distribution looks stable.</p>
+            {% endif %}
+        </div>
+
+        <div class="insight-box">
+            <span>😴 Recovery Status</span>
+
+            <h3>Moderate</h3>
+            <p>Hydration and sleep can improve recovery.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ⚡ RECOVERY SECTION -->
+
+<div class="card ultra-card">
+
+    <h2 class="glow-title">⚡ Recovery & Hydration</h2>
+
+    <div class="recovery-grid">
+
+        <div class="recovery-box">
+            <h3>💧 Water Intake</h3>
+            <div class="water-ring">
+                72%
+            </div>
+            <p>Hydration level looks good today.</p>
+        </div>
+
+        <div class="recovery-box">
+            <h3>😴 Recovery Score</h3>
+            <div class="recovery-score">
+                81
+            </div>
+            <p>Your body recovery is above average.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 🥗 NUTRITION QUALITY -->
+
+<div class="card ultra-card">
+
+    <h2 class="glow-title">🥗 Nutrition Quality Score</h2>
+
+    <div class="quality-wrap">
+
+        <div class="quality-ring">
+            <div class="quality-inner">
+                88
+            </div>
+        </div>
+
+        <div class="quality-text">
+
+            <h3>Excellent Nutrition Balance</h3>
+
+            <p>
+                Your meals contain balanced carbs,
+                proteins and fats with healthy calorie distribution.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+        <!-- 🤖 AI COACH -->
+    <!-- 🧠 AI HEALTH INSIGHTS -->
+
+<div class="card insights-card">
+
+    <h2 class="section-glow">🧠 AI Health Insights</h2>
+
+    <div class="insight-grid">
+
+        <div class="insight-box">
+            <span>🔥 Calorie Status</span>
+            <h3>{{ eaten_cal }} / {{ total_cal }}</h3>
+
+            {% if remaining_cal > 500 %}
+                <p>You still need more energy intake today.</p>
+            {% else %}
+                <p>Your calorie intake is balanced.</p>
+            {% endif %}
+        </div>
+
+        <div class="insight-box">
+            <span>💪 Protein Analysis</span>
+            <h3>{{ eaten_protein|round(1) }}g</h3>
+
+            {% if eaten_protein < protein*0.5 %}
+                <p>Protein intake is low. Add paneer, eggs or chicken.</p>
+            {% else %}
+                <p>Good protein intake today.</p>
+            {% endif %}
+        </div>
+
+        <div class="insight-box">
+            <span>⚡ Energy Level</span>
+
+            {% if remaining_cal > 700 %}
+                <h3>High Energy Need</h3>
+                <p>Your body may require more fuel today.</p>
+            {% else %}
+                <h3>Balanced</h3>
+                <p>Your meal distribution looks stable.</p>
+            {% endif %}
+        </div>
+
+        <div class="insight-box">
+            <span>🤖 AI Recommendation</span>
+            <h3>Smart Suggestion</h3>
+
+            {% if goal == "weight_loss" %}
+                <p>Keep dinner light and increase hydration.</p>
+            {% elif goal == "muscle_gain" %}
+                <p>Add more protein-rich meals post workout.</p>
+            {% else %}
+                <p>Maintain balanced nutrition consistently.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 💬 FLOATING CHAT -->
+<div class="chat-btn" onclick="toggleChat()">💬</div>
+
+<div id="chatPopup" class="chat-popup">
+    <div class="chat-header">AI Coach</div>
+
+    <div id="chatBox" class="chat-body"></div>
+
+    <div class="chat-input">
+        <input type="text" id="msg" placeholder="Ask anything..." />
+        <button onclick="sendMessage()">Send</button>
+        <button id="micBtn">🎤</button>
+    </div>
+</div>
+
+<script>
+function toggleChat(){
+    let c = document.getElementById("chatPopup");
+    c.style.display = (c.style.display === "flex") ? "none" : "flex";
+}
+</script>
+<script>
+
+function appendMsg(sender, msg) {
+    let chatBox = document.getElementById("chatBox");
+
+    if (!chatBox) return;
+
+    let div = document.createElement("p");
+    div.innerHTML = `<b>${sender}:</b> ${msg}`;
+    chatBox.appendChild(div);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+async function sendMessage() {
+
+    let input = document.getElementById("msg");
+    if (!input) return;
+
+    let msg = input.value.trim();
+    if (!msg) return;
+
+    appendMsg("You", msg);
+
+    input.value = "";
+
+    try {
+        let res = await fetch("/chat", {
+            method: "POST",
+            headers: {"Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token() }}"},
+            body: JSON.stringify({ message: msg })
+
+
+        });
+
+        let data = await res.json();
+
+        appendMsg("AI", data.reply);
+
+    } catch (err) {
+        appendMsg("AI", "❌ Server error");
+    }
+}
+
+
+// ENTER KEY
+document.addEventListener("DOMContentLoaded", () => {
+    let input = document.getElementById("msg");
+
+    if (input) {
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendMessage();
+        });
+    }
+});
+
+</script>
+<script>
+async function loadChat() {
+
+    let res = await fetch("/get_chat");
+    let data = await res.json();
+
+    let chatBox = document.getElementById("chatBox");
+
+    data.forEach(c => {
+        chatBox.innerHTML += `<p><b>You:</b> ${c.message}</p>`;
+        chatBox.innerHTML += `<p><b>AI:</b> ${c.reply}</p>`;
+    });
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    let res = await fetch("/get_chat");
+    let data = await res.json();
+
+    data.forEach(c => {
+        appendMsg("You", c.message);
+        appendMsg("AI", c.reply);
+    });
+
+});
+</script>
+<script>
+const micBtn = document.getElementById("micBtn");
+const messageInput = document.getElementById("msg");
+
+const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (!SpeechRecognition) {
+    alert("Speech Recognition not supported in this browser");
+}
+
+const recognition = new SpeechRecognition();
+
+// ✅ better config
+recognition.lang = "en-IN";   // single stable language
+recognition.interimResults = false;
+recognition.continuous = false;
+recognition.maxAlternatives = 1;
+
+let isListening = false;
+
+micBtn.addEventListener("click", () => {
+    if (isListening) {
+        recognition.stop();
+        return;
+    }
+
+    try {
+        recognition.start();
+        isListening = true;
+        micBtn.innerText = "⏹️";
+    } catch (e) {
+        console.log("Mic already running");
+    }
+});
+
+recognition.onresult = (event) => {
+    const text = event.results[0][0].transcript;
+    console.log("VOICE:", text);
+
+    messageInput.value = text;
+};
+
+recognition.onerror = (event) => {
+    console.log("Voice error:", event.error);
+};
+
+recognition.onend = () => {
+    isListening = false;
+    micBtn.innerText = "🎤";
+};
+</script>
+
+
+
+
+
+
+<style>
+
+.dashboard{
+    max-width:1400px;
+    margin:auto;
+    padding:30px;
+}
+
+/* ================= TOP SECTION ================= */
+
+.top-bar{
+    margin-bottom:25px;
+}
+
+.top-flex{
+    display:grid;
+    grid-template-columns:250px 1fr;
+    gap:25px;
+    align-items:center;
+}
+
+.cal-circle{
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:linear-gradient(145deg,#00ffc8,#00bfff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-size:34px;
+    font-weight:700;
+    color:#000;
+    box-shadow:0 0 30px rgba(0,255,200,0.25);
+}
+
+/* ================= MAIN GRID ================= */
+
+.main-grid{
+    display:grid;
+    grid-template-columns:1.4fr 0.8fr;
+    gap:25px;
+    align-items:start;
+}
+
+/* ================= CARD ================= */
+
+.card{
+    background:linear-gradient(145deg,#0f172a,#111827);
+    border-radius:24px;
+    padding:25px;
+    border:1px solid rgba(255,255,255,0.05);
+    box-shadow:0 10px 30px rgba(0,0,0,0.45);
+}
+
+/* ================= TITLES ================= */
+
+.card h2{
+    margin-bottom:20px;
+    color:#fff;
+    font-size:28px;
+}
+
+/* ================= MEALS ================= */
+
+.meal-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+    margin-top:20px;
+}
+
+.meal-box{
+    background:#161616;
+    padding:18px;
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,0.04);
+    transition:0.3s;
+}
+
+.meal-box:hover{
+    transform:translateY(-4px);
+    box-shadow:0 0 20px rgba(0,255,200,0.08);
+}
+
+.meal-box h3{
+    margin-bottom:10px;
+    color:#fff;
+}
+
+.meal-box p{
+    color:#bbb;
+    line-height:1.5;
+}
+
+/* ================= MACRO SECTION ================= */
+
+.section-title{
+    margin-bottom:20px;
+    font-size:26px;
+    color:#fff;
+}
+
+.macro-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+}
+
+.macro-card{
+    background:#161616;
+    border-radius:18px;
+    padding:18px;
+    border:1px solid rgba(255,255,255,0.05);
+    transition:0.3s;
+}
+
+.macro-card:hover{
+    transform:translateY(-3px);
+}
+
+.macro-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+
+.macro-top span{
+    color:#aaa;
+    font-size:14px;
+}
+
+.macro-top b{
+    color:#fff;
+}
+
+/* ================= PROGRESS ================= */
+
+.progress,
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#222;
+    border-radius:20px;
+    overflow:hidden;
+    margin:12px 0;
+}
+
+.progress div,
+.progress-bar div{
+    height:100%;
+    border-radius:20px;
+    background:linear-gradient(90deg,#00ffae,#00c3ff);
+}
+
+.progress.protein div{
+    background:linear-gradient(90deg,#00ff88,#00d9ff);
+}
+
+.progress.carbs div{
+    background:linear-gradient(90deg,#ffb347,#ffcc33);
+}
+
+.progress.fats div{
+    background:linear-gradient(90deg,#ff7eb3,#ff758c);
+}
+
+/* ================= COACH ================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.stats div{
+    background:#161616;
+    padding:18px;
+    border-radius:16px;
+    text-align:center;
+}
+
+.stats span{
+    display:block;
+    color:#888;
+    font-size:13px;
+    margin-bottom:5px;
+}
+
+.stats b{
+    color:white;
+    font-size:18px;
+}
+
+.tip{
+    color:#00ffc8;
+    font-weight:600;
+    margin-top:10px;
+}
+
+/* ================= CHAT ================= */
+
+.chat-btn{
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    background:linear-gradient(145deg,#00ffc8,#00bfff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    cursor:pointer;
+    z-index:1000;
+    box-shadow:0 0 25px rgba(0,255,200,0.35);
+}
+
+.chat-popup{
+    position:fixed;
+    right:25px;
+    bottom:105px;
+    width:360px;
+    height:520px;
+    background:#0f172a;
+    border-radius:24px;
+    display:none;
+    flex-direction:column;
+    overflow:hidden;
+    z-index:1000;
+    border:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 0 40px rgba(0,0,0,0.5);
+}
+
+.chat-header{
+    padding:18px;
+    background:#00ffc8;
+    color:#000;
+    font-weight:700;
+}
+
+.chat-body{
+    flex:1;
+    overflow-y:auto;
+    padding:15px;
+    color:white;
+}
+
+.chat-body p{
+    margin-bottom:12px;
+    line-height:1.5;
+}
+
+.chat-input{
+    display:flex;
+    border-top:1px solid rgba(255,255,255,0.08);
+}
+
+.chat-input input{
+    flex:1;
+    background:#111827;
+    border:none;
+    color:white;
+    padding:16px;
+    outline:none;
+}
+
+.chat-input button{
+    background:#00ffc8;
+    border:none;
+    padding:0 22px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:1000px){
+
+    .main-grid{
+        grid-template-columns:1fr;
+    }
+
+    .top-flex{
+        grid-template-columns:1fr;
+        justify-items:center;
+    }
+
+    .meal-grid{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .chat-popup{
+        width:95%;
+        right:2.5%;
+    }
+
+}
+    /* ================= FUTURISTIC CARD ================= */
+
+.futuristic-card{
+    background:rgba(20,30,40,0.92);
+    border-radius:28px;
+    padding:35px;
+    border:1px solid rgba(0,255,200,0.15);
+    box-shadow:
+        0 0 40px rgba(0,255,200,0.08),
+        inset 0 0 30px rgba(255,255,255,0.02);
+    position:relative;
+    overflow:hidden;
+}
+
+/* TITLE */
+
+.glow-title{
+    text-align:center;
+    color:#00ffd0;
+    margin-bottom:30px;
+    font-size:28px;
+    letter-spacing:1px;
+    text-shadow:0 0 12px rgba(0,255,200,0.4);
+}
+
+/* GOAL RING */
+
+.goal-ring-wrap{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:35px 0;
+}
+
+.goal-ring{
+    width:230px;
+    height:230px;
+    border-radius:50%;
+    background:
+    conic-gradient(
+        #00ffd0 calc({{ progress_percent }} * 1%),
+        rgba(255,255,255,0.08) 0%
+    );
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:
+        0 0 40px rgba(0,255,200,0.25),
+        inset 0 0 20px rgba(255,255,255,0.05);
+}
+
+.goal-inner{
+    width:170px;
+    height:170px;
+    border-radius:50%;
+    background:#0b1220;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.goal-inner h1{
+    color:#00ffd0;
+    font-size:42px;
+    text-shadow:0 0 15px rgba(0,255,200,0.5);
+}
+
+/* MINI STATS */
+
+.ai-status{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-top:35px;
+}
+
+.mini-stat{
+    background:rgba(255,255,255,0.03);
+    padding:18px;
+    border-radius:18px;
+    text-align:center;
+    border:1px solid rgba(255,255,255,0.05);
+}
+
+.mini-stat span{
+    display:block;
+    color:#7f8c9a;
+    margin-bottom:8px;
+    font-size:13px;
+}
+
+.mini-stat b{
+    color:white;
+    font-size:18px;
+}
+
+/* AI BOX */
+
+.ai-box{
+    margin-top:35px;
+    background:rgba(0,255,200,0.05);
+    border:1px solid rgba(0,255,200,0.1);
+    padding:25px;
+    border-radius:22px;
+    text-align:center;
+}
+
+.ai-box h3{
+    color:#00ffd0;
+    margin-bottom:10px;
+    font-size:24px;
+}
+
+.ai-box p{
+    color:#c7d2da;
+    line-height:1.7;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    .ai-status{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .goal-ring{
+        width:180px;
+        height:180px;
+    }
+
+    .goal-inner{
+        width:130px;
+        height:130px;
+    }
+
+}
+    /* ================= INSIGHTS ================= */
+
+.insights-card{
+    margin-top:25px;
+}
+
+.section-glow{
+    color:#00ffd0;
+    margin-bottom:25px;
+    font-size:28px;
+    text-shadow:0 0 15px rgba(0,255,200,0.35);
+}
+
+.insight-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.insight-box{
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.05);
+    padding:25px;
+    border-radius:24px;
+    transition:0.3s;
+}
+
+.insight-box:hover{
+    transform:translateY(-5px);
+    box-shadow:0 0 20px rgba(0,255,200,0.08);
+}
+
+.insight-box span{
+    color:#7f8c9a;
+    font-size:14px;
+}
+
+.insight-box h3{
+    color:#00ffd0;
+    margin:12px 0;
+    font-size:24px;
+}
+
+.insight-box p{
+    color:#c7d2da;
+    line-height:1.7;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    .insight-grid{
+        grid-template-columns:1fr;
+    }
+
+}/* ================= PAGE BACKGROUND ================= */
+
+body{
+    background:
+    radial-gradient(circle at top left,#102a43,#07121f 40%),
+    radial-gradient(circle at bottom right,#0a3b4a,#050b16 50%);
+    color:white;
+    font-family:'Poppins',sans-serif;
+}
+
+/* ================= ULTRA CARD ================= */
+
+.ultra-card{
+    margin-top:30px;
+    background:rgba(15,20,30,0.88);
+    border-radius:30px;
+    padding:35px;
+    border:1px solid rgba(255,255,255,0.06);
+
+    box-shadow:
+        0 0 40px rgba(0,255,200,0.06),
+        inset 0 0 25px rgba(255,255,255,0.02);
+
+    backdrop-filter:blur(18px);
+}
+
+/* ================= TITLES ================= */
+
+.glow-title{
+    color:#00ffd0;
+    margin-bottom:28px;
+    font-size:30px;
+    text-shadow:0 0 20px rgba(0,255,200,0.35);
+}
+
+/* ================= INSIGHTS ================= */
+
+.insight-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.insight-box{
+    background:rgba(255,255,255,0.03);
+    padding:25px;
+    border-radius:24px;
+}
+
+.insight-box span{
+    color:#7f8c9a;
+}
+
+.insight-box h3{
+    margin:12px 0;
+    color:#00ffd0;
+}
+
+/* ================= RECOVERY ================= */
+
+.recovery-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+.recovery-box{
+    background:rgba(255,255,255,0.03);
+    padding:30px;
+    border-radius:26px;
+    text-align:center;
+}
+
+.water-ring,
+.recovery-score{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    margin:20px auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:34px;
+    font-weight:700;
+
+    background:
+    radial-gradient(circle,#0f172a 58%,transparent 60%),
+    conic-gradient(#00ffd0 72%,rgba(255,255,255,0.08) 0);
+
+    color:#00ffd0;
+}
+
+/* ================= QUALITY ================= */
+
+.quality-wrap{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:40px;
+    flex-wrap:wrap;
+}
+
+.quality-ring{
+    width:220px;
+    height:220px;
+    border-radius:50%;
+
+    background:
+    conic-gradient(#00ffd0 88%,rgba(255,255,255,0.08) 0);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.quality-inner{
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    background:#0b1220;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#00ffd0;
+    font-size:42px;
+    font-weight:700;
+}
+
+.quality-text{
+    max-width:450px;
+}
+
+.quality-text h3{
+    color:#00ffd0;
+    margin-bottom:15px;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:900px){
+
+    .insight-grid,
+    .recovery-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+    ```css
+/* =========================================
+🔥 FULL PAGE BACKGROUND
+========================================= */
+
+body{
+    margin:0;
+    padding:0;
+    font-family:'Poppins',sans-serif;
+
+    background:
+    radial-gradient(circle at top,#17353f 0%,#07111d 45%,#030712 100%);
+
+    color:white;
+    min-height:100vh;
+}
+
+
+/* =========================================
+🔥 MAIN DASHBOARD
+========================================= */
+
+.dashboard{
+    width:92%;
+    max-width:1200px;
+    margin:auto;
+    padding:40px 0;
+
+    display:flex;
+    flex-direction:column;
+    gap:35px;
+}
+
+
+/* =========================================
+🔥 ALL BOX SAME SIZE
+========================================= */
+
+.card{
+    width:100%;
+    min-height:420px;
+
+    background:
+    linear-gradient(
+        145deg,
+        rgba(33,55,66,0.92),
+        rgba(17,30,42,0.95)
+    );
+
+    border-radius:28px;
+
+    border:1px solid rgba(255,255,255,0.07);
+
+    box-shadow:
+    0 0 35px rgba(0,255,200,0.08),
+    inset 0 0 25px rgba(255,255,255,0.02);
+
+    padding:32px;
+
+    box-sizing:border-box;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+
+/* =========================================
+🔥 GLOW EFFECT
+========================================= */
+
+.card::before{
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(0,255,200,0.08),
+        transparent 30%,
+        transparent 70%,
+        rgba(0,140,255,0.08)
+    );
+
+    pointer-events:none;
+}
+
+
+/* =========================================
+🔥 HEADINGS
+========================================= */
+
+.card h2{
+    text-align:center;
+
+    color:#00ffd5;
+
+    font-size:28px;
+
+    margin-bottom:30px;
+
+    letter-spacing:1px;
+
+    font-weight:700;
+}
+
+
+/* =========================================
+🔥 DAILY TARGET
+========================================= */
+
+.top-flex{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:25px;
+}
+
+
+/* =========================================
+🔥 CALORIE CIRCLE
+========================================= */
+
+.cal-circle{
+    width:170px;
+    height:170px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
+
+    font-size:34px;
+    font-weight:700;
+
+    color:#00ffe1;
+
+    border:8px solid rgba(0,255,200,0.15);
+
+    box-shadow:
+    0 0 30px rgba(0,255,200,0.2),
+    inset 0 0 25px rgba(0,255,200,0.08);
+
+    background:
+    radial-gradient(circle,#102633,#08131d);
+}
+
+
+/* =========================================
+🔥 MACRO GRID
+========================================= */
+
+.macro-grid{
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:20px;
+}
+
+
+/* =========================================
+🔥 MACRO CARD
+========================================= */
+
+.macro-card{
+    background:
+    linear-gradient(
+        145deg,
+        rgba(25,25,25,0.95),
+        rgba(17,17,17,0.95)
+    );
+
+    border-radius:18px;
+
+    padding:20px;
+
+    border:1px solid rgba(255,255,255,0.05);
+
+    transition:0.3s;
+}
+
+.macro-card:hover{
+    transform:translateY(-5px);
+
+    box-shadow:
+    0 0 20px rgba(0,255,200,0.15);
+}
+
+
+/* =========================================
+🔥 MACRO TOP
+========================================= */
+
+.macro-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:15px;
+}
+
+.macro-top span{
+    color:#d1d5db;
+    font-size:15px;
+}
+
+.macro-top b{
+    color:white;
+    font-size:16px;
+}
+
+
+/* =========================================
+🔥 PROGRESS BAR
+========================================= */
+
+.progress{
+    width:100%;
+    height:12px;
+
+    background:#202020;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    margin-bottom:10px;
+}
+
+.progress div{
+    height:100%;
+
+    border-radius:30px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #00ffd5,
+        #00aaff
+    );
+
+    box-shadow:
+    0 0 12px rgba(0,255,200,0.5);
+}
+
+
+/* =========================================
+🔥 MEAL GRID
+========================================= */
+
+.meal-grid{
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:20px;
+
+    margin-top:25px;
+}
+
+
+/* =========================================
+🔥 MEAL BOX
+========================================= */
+
+.meal-box{
+    background:
+    linear-gradient(
+        145deg,
+        rgba(20,20,20,0.95),
+        rgba(30,30,30,0.92)
+    );
+
+    border-radius:18px;
+
+    padding:22px;
+
+    border:1px solid rgba(255,255,255,0.04);
+
+    transition:0.3s;
+}
+
+.meal-box:hover{
+    transform:scale(1.02);
+
+    box-shadow:
+    0 0 20px rgba(0,255,200,0.1);
+}
+
+.meal-box h3{
+    color:#00ffd5;
+
+    margin-bottom:12px;
+}
+
+.meal-box p{
+    color:#e5e7eb;
+
+    line-height:1.6;
+}
+
+
+/* =========================================
+🔥 AI COACH STATS
+========================================= */
+
+.stats{
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:18px;
+
+    margin-top:25px;
+}
+
+.stats div{
+    background:
+    linear-gradient(
+        145deg,
+        rgba(22,22,22,0.95),
+        rgba(18,18,18,0.95)
+    );
+
+    padding:22px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    border:1px solid rgba(255,255,255,0.04);
+}
+
+.stats span{
+    display:block;
+
+    color:#a1a1aa;
+
+    margin-bottom:8px;
+}
+
+.stats b{
+    color:#00ffe1;
+
+    font-size:18px;
+}
+
+
+/* =========================================
+🔥 AI MESSAGE
+========================================= */
+
+.card h3{
+    margin-top:30px;
+
+    color:#00ffd5;
+
+    text-align:center;
+
+    font-size:24px;
+}
+
+.card p{
+    color:#d1d5db;
+
+    text-align:center;
+
+    line-height:1.8;
+}
+
+
+/* =========================================
+🔥 CHAT BUTTON
+========================================= */
+
+.chat-btn{
+    position:fixed;
+
+    bottom:25px;
+    right:25px;
+
+    width:65px;
+    height:65px;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+        145deg,
+        #00ffd5,
+        #00b7ff
+    );
+
+    color:black;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 0 25px rgba(0,255,200,0.35);
+
+    z-index:999;
+}
+
+
+/* =========================================
+🔥 CHAT POPUP
+========================================= */
+
+.chat-popup{
+    display:none;
+
+    flex-direction:column;
+
+    position:fixed;
+
+    bottom:105px;
+    right:25px;
+
+    width:360px;
+    height:500px;
+
+    background:
+    linear-gradient(
+        145deg,
+        #121212,
+        #1d1d1d
+    );
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    border:1px solid rgba(255,255,255,0.06);
+
+    box-shadow:
+    0 0 35px rgba(0,255,200,0.15);
+
+    z-index:999;
+}
+
+
+/* =========================================
+🔥 CHAT HEADER
+========================================= */
+
+.chat-header{
+    padding:18px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #00ffd5,
+        #00aaff
+    );
+
+    color:black;
+
+    font-weight:700;
+
+    text-align:center;
+}
+
+
+/* =========================================
+🔥 CHAT BODY
+========================================= */
+
+.chat-body{
+    flex:1;
+
+    overflow-y:auto;
+
+    padding:18px;
+
+    color:white;
+}
+
+
+/* =========================================
+🔥 CHAT INPUT
+========================================= */
+
+.chat-input{
+    display:flex;
+
+    border-top:1px solid rgba(255,255,255,0.06);
+}
+
+.chat-input input{
+    flex:1;
+
+    padding:16px;
+
+    border:none;
+
+    background:#111;
+
+    color:white;
+
+    outline:none;
+}
+
+.chat-input button{
+    width:100px;
+
+    border:none;
+
+    background:
+    linear-gradient(
+        90deg,
+        #00ffd5,
+        #00aaff
+    );
+
+    color:black;
+
+    font-weight:700;
+
+    cursor:pointer;
+}
+
+
+/* =========================================
+🔥 MOBILE
+========================================= */
+
+@media(max-width:900px){
+
+    .macro-grid{
+        grid-template-columns:1fr;
+    }
+
+    .meal-grid{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .chat-popup{
+        width:92%;
+        right:4%;
+    }
+}
+```
+
+
+</style>
+
+
+{% endblock %}

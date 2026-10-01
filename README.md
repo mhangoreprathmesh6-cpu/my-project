@@ -407,7 +407,7 @@ It can be used as an academic/final-year project demonstrating an AI-powered hea
 
 ## 👨‍💻 Author
 
-**Omkar Udale**
+**Prathmesh Mhangore**
 
 ---
 
